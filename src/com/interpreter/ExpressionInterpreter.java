@@ -2,7 +2,7 @@ package com.interpreter;
 
 import java.util.Scanner;
 
-public class TestInterpreter {
+public class ExpressionInterpreter {
     public static void main(String[] args) {
         while(true) {
             Scanner scanner = new Scanner(System.in);
