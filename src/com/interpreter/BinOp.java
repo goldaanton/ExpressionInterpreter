@@ -5,17 +5,22 @@ public class BinOp extends AST {
     private AST right;
     private AST left;
     private Token op;
-    private Token token;
 
     public BinOp(AST left, Token op, AST right) {
         this.left = left;
         this.right = right;
         this.op = op;
-        this.token = op;
     }
 
-    Token getOp() {
-        return this.op;
+    public TokenType getOp() {
+        return this.op.getType();
     }
 
+    public AST getLeft() {
+        return this.left;
+    }
+
+    public AST getRight() {
+        return this.right;
+    }
 }

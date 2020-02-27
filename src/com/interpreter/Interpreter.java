@@ -1,77 +1,42 @@
 package com.interpreter;
 
-import static java.lang.System.exit;
 
-public class Interpreter {
+public class Interpreter extends NodeVisitor {
 
-    private Token currentToken;
-    private Lexer lexer;
+    private Parser parser;
 
-    private final char none = '\0';
-
-    public Interpreter(Lexer lexer) {
-        this.lexer = lexer;
-        this.currentToken = lexer.getNextToken();
+    public Interpreter(Parser parser) {
+        this.parser = parser;
     }
 
-    private void error() {
-        System.out.println("Invalid syntax");
-        exit(1);
-    }
+    @Override
+    public String visitBinOp(BinOp node) {
 
-    private void eat(TokenType type) {
-        if(currentToken.getType() == type)
-            currentToken = lexer.getNextToken();
-        else
-            error();
-    }
+        String result = null;
 
-    private int factor() {
-        Token token = currentToken;
-        if(token.getType() == TokenType.INTEGER) {
-            eat(TokenType.INTEGER);
-            return Integer.parseInt(token.getValue());
-        } else if (token.getType() == TokenType.LPARENTHESIS) {
-            eat(TokenType.LPARENTHESIS);
-            int result = expr();
-            eat(TokenType.RPARENTHESIS);
-            return result;
-        } else {
-            error();
-            return 0;
-        }
-    }
+        String left = visit(node.getLeft());
+        String right = visit(node.getRight());
 
-    private int term() {
-        int result = factor();
-
-        while(currentToken.getType() == TokenType.DIVISION || currentToken.getType() == TokenType.MULTIPLICATION) {
-            Token token = currentToken;
-            if(token.getType() == TokenType.MULTIPLICATION) {
-                eat(TokenType.MULTIPLICATION);
-                result *= factor();
-            } else if (token.getType() == TokenType.DIVISION) {
-                eat(TokenType.DIVISION);
-                result /= factor();
-            }
+        if(node.getOp() == TokenType.ADDITION) {
+            result = String.valueOf(Integer.parseInt(left) + Integer.parseInt(right));
+        } else if (node.getOp() == TokenType.SUBTRACTION) {
+            return String.valueOf(Integer.parseInt(left) - Integer.parseInt(right));
+        } else if (node.getOp() == TokenType.DIVISION) {
+            return String.valueOf(Integer.parseInt(left) / Integer.parseInt(right));
+        } else if (node.getOp() == TokenType.MULTIPLICATION) {
+            return String.valueOf(Integer.parseInt(left) * Integer.parseInt(right));
         }
 
         return result;
     }
 
-    public int expr() {
-        int result = term();
+    @Override
+    public String visitNum(Num node) {
+        return node.getValue();
+    }
 
-        while(currentToken.getType() == TokenType.ADDITION || currentToken.getType() == TokenType.SUBTRACTION) {
-            Token token = currentToken;
-            if(token.getType() == TokenType.ADDITION) {
-                eat(TokenType.ADDITION);
-                result += term();
-            } else if (token.getType() == TokenType.SUBTRACTION) {
-                eat(TokenType.SUBTRACTION);
-                result -= term();
-            }
-        }
-        return result;
+    public int interpret() {
+        AST tree = parser.parse();
+        return Integer.parseInt(visit(tree));
     }
 }
