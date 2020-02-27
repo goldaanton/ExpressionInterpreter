@@ -1,6 +1,7 @@
 package com.interpreter;
 
 import static java.lang.System.exit;
+import static java.lang.System.in;
 
 public class Parser {
 
@@ -26,7 +27,14 @@ public class Parser {
 
     private AST factor() {
         Token token = currentToken;
-        if (token.getType() == TokenType.INTEGER) {
+
+        if(token.getType() == TokenType.ADDITION) {
+            eat(TokenType.ADDITION);
+            return new UnaryOp(token, factor());
+        } else if (token.getType() == TokenType.SUBTRACTION) {
+            eat(TokenType.SUBTRACTION);
+            return new UnaryOp(token, factor());
+        } else if (token.getType() == TokenType.INTEGER) {
             eat(TokenType.INTEGER);
             return new Num(token);
         } else if (token.getType() == TokenType.LPARENTHESIS) {

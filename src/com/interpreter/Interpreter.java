@@ -35,6 +35,20 @@ public class Interpreter extends NodeVisitor {
         return node.getValue();
     }
 
+    @Override
+    public String visitUnaryOp(UnaryOp node) {
+
+        String result = null;
+        TokenType op = node.getOp().getType();
+
+        if(op == TokenType.ADDITION)
+            result = visit(node.getExpr());
+        else if (op == TokenType.SUBTRACTION)
+            result = String.valueOf(-1 * Integer.parseInt(visit(node.getExpr())));
+
+        return result;
+    }
+
     public int interpret() {
         AST tree = parser.parse();
         return Integer.parseInt(visit(tree));
