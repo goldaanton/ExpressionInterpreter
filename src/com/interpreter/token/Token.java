@@ -3,9 +3,9 @@ package com.interpreter.token;
 public class Token {
 
     private TokenType type;
-    private String value;
+    private Object value;
 
-    public Token(TokenType type, String value) {
+    public Token(TokenType type, Object value) {
         this.type = type;
         this.value = value;
     }
@@ -14,7 +14,7 @@ public class Token {
         return this.type;
     }
 
-    public String getValue() {
+    public Object getValue() {
         return this.value;
     }
 }

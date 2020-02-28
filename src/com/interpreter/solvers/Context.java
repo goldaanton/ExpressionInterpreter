@@ -4,13 +4,13 @@ import java.util.HashMap;
 
 public class Context {
 
-    private HashMap<String, String> globalScope;
+    private HashMap<String, Object> globalScope;
 
     public Context() {
         globalScope = new HashMap<>();
     }
 
-    public HashMap<String, String> getGlobalScope() {
+    public HashMap<String, Object> getGlobalScope() {
         return globalScope;
     }
 }

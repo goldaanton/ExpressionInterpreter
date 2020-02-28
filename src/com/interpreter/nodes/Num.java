@@ -12,11 +12,7 @@ public class Num implements AbstractExpression {
     }
 
     @Override
-    public String solve(Context context) {
-        return getNumToken().getValue();
-    }
-
-    public Token getNumToken() {
-        return token;
+    public Object solve(Context context) {
+        return token.getValue();
     }
 }

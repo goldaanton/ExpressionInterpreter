@@ -14,10 +14,8 @@ public class ExpressionInterpreter {
             Lexer lexer = new Lexer(expression);
             Parser parser = new Parser(lexer);
             Interpreter interpreter = new Interpreter(parser);
-            int res = interpreter.interpret();
-            System.out.println(interpreter.getContext().getGlobalScope().size());
+            interpreter.interpret();
             interpreter.getContext().getGlobalScope().forEach((key, value) -> System.out.println("key = " + key + " ; val " + value));
-            System.out.println(res);
         }
     }
 }

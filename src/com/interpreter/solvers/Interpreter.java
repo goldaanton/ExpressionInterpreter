@@ -18,10 +18,9 @@ public class Interpreter {
         this.context = new Context();
     }
 
-    public int interpret() {
+    public void interpret() {
         AbstractExpression tree = parser.parse();
         tree.solve(context);
-        return -1;
     }
 
     public Context getContext() {

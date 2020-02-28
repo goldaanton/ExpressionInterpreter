@@ -15,23 +15,13 @@ public class UnaryOp implements AbstractExpression {
     }
 
     @Override
-    public String solve(Context context) {
-        String result = null;
+    public Object solve(Context context) {
         TokenType opType = op.getType();
 
         if(opType == TokenType.ADDITION)
-            result = expr.solve(context);
+            return expr.solve(context);
         else if (opType == TokenType.SUBTRACTION)
-            result = String.valueOf(-1 * Integer.parseInt(expr.solve(context)));
-
-        return result;
-    }
-
-    public AbstractExpression getExpr() {
-        return this.expr;
-    }
-
-    public Token getOp() {
-        return this.op;
+            return (-1 * (Integer)expr.solve(context));
+        return null;
     }
 }

@@ -16,18 +16,10 @@ public class Assign implements AbstractExpression {
     }
 
     @Override
-    public String solve(Context context) {
-        String varName = left.getVarToken().getValue();
-        String varValue = right.solve(context);
+    public Object solve(Context context) {
+        String varName = (String)left.getVarToken().getValue();
+        Object varValue = right.solve(context);
         context.getGlobalScope().put(varName, varValue);
-        return "";
-    }
-
-    public Var getLeft() {
-        return this.left;
-    }
-
-    public AbstractExpression getRight() {
-        return right;
+        return null;
     }
 }

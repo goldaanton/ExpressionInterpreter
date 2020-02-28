@@ -24,8 +24,8 @@ public class Lexer {
         Token beginToken = new Token(TokenType.BEGIN, "BEGIN");
         Token endToken = new Token(TokenType.END, "END");
 
-        RESERVED_KEYWORDS.put(beginToken.getValue(), beginToken);
-        RESERVED_KEYWORDS.put(endToken.getValue(), endToken);
+        RESERVED_KEYWORDS.put((String)beginToken.getValue(), beginToken);
+        RESERVED_KEYWORDS.put((String)endToken.getValue(), endToken);
     }
 
     public Lexer(String expression) {
@@ -52,13 +52,13 @@ public class Lexer {
             advance();
     }
 
-    private String getInteger() {
-        String res = "";
+    private int getInteger() {
+        StringBuilder integer = new StringBuilder();
         while(currentChar != none && Character.isDigit(currentChar)) {
-            res += currentChar;
+            integer.append(currentChar);
             advance();
         }
-        return res;
+        return Integer.parseInt(integer.toString());
     }
 
     public Token getNextToken() {
@@ -112,13 +112,13 @@ public class Lexer {
         return new Token(TokenType.EOF, null);
     }
 
-    private char peek() {
-        int peekPos = ++pos;
-        if(peekPos >= expression.length())
-            return none;
-        else
-            return expression.charAt(peekPos);
-    }
+//    private char peek() {
+//        int peekPos = ++pos;
+//        if(peekPos >= expression.length())
+//            return none;
+//        else
+//            return expression.charAt(peekPos);
+//    }
 
     private Token id() {
         StringBuilder result = new StringBuilder();

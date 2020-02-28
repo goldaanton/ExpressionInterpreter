@@ -13,11 +13,11 @@ public class Compound implements AbstractExpression {
     }
 
     @Override
-    public String solve(Context context) {
+    public Object solve(Context context) {
         for(AbstractExpression child : children) {
             child.solve(context);
         }
-        return "";
+        return null;
     }
 
     public ArrayList<AbstractExpression> getChildren() {

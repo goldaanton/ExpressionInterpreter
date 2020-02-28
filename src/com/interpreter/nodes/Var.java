@@ -14,10 +14,10 @@ public class Var implements AbstractExpression {
     }
 
     @Override
-    public String solve(Context context) {
+    public Object solve(Context context) {
 
-        String varName = token.getValue();
-        String val = context.getGlobalScope().get(varName);
+        String varName = (String)token.getValue();
+        Object val = context.getGlobalScope().get(varName);
 
         if(val == "") {
             System.out.println("There is no such variable");

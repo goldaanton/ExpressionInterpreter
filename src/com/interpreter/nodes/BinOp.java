@@ -17,34 +17,19 @@ public class BinOp implements AbstractExpression {
     }
 
     @Override
-    public String solve(Context context) {
-        String result = null;
-
-        String leftResult = left.solve(context);
-        String rightResult = right.solve(context);
+    public Object solve(Context context) {
+        Object leftResult = left.solve(context);
+        Object rightResult = right.solve(context);
 
         if(op.getType() == TokenType.ADDITION) {
-            result = String.valueOf(Integer.parseInt(leftResult) + Integer.parseInt(rightResult));
-        } else if (getOp().getType() == TokenType.SUBTRACTION) {
-            return String.valueOf(Integer.parseInt(leftResult) - Integer.parseInt(rightResult));
-        } else if (getOp().getType() == TokenType.DIVISION) {
-            return String.valueOf(Integer.parseInt(leftResult) / Integer.parseInt(rightResult));
-        } else if (getOp().getType() == TokenType.MULTIPLICATION) {
-            return String.valueOf(Integer.parseInt(leftResult) * Integer.parseInt(rightResult));
+            return (Integer)leftResult + (Integer)rightResult;
+        } else if (op.getType() == TokenType.SUBTRACTION) {
+            return (Integer)leftResult - (Integer)rightResult;
+        } else if (op.getType() == TokenType.DIVISION) {
+            return (Integer)leftResult / (Integer)rightResult;
+        } else if (op.getType() == TokenType.MULTIPLICATION) {
+            return (Integer)leftResult * (Integer)rightResult;
         }
-
-        return result;
-    }
-
-    public Token getOp() {
-        return this.op;
-    }
-
-    public AbstractExpression getLeft() {
-        return this.left;
-    }
-
-    public AbstractExpression getRight() {
-        return this.right;
+        return null;
     }
 }
