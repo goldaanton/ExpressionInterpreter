@@ -1,18 +1,26 @@
 package com.interpreter.nodes;
 
-import com.interpreter.nodes.AST;
+import com.interpreter.solvers.Context;
 
 import java.util.ArrayList;
 
-public class Compound extends AST {
+public class Compound implements AbstractExpression {
 
-    private ArrayList<AST> children;
+    private ArrayList<AbstractExpression> children;
 
     public Compound() {
-        children = new ArrayList<AST>();
+        children = new ArrayList<AbstractExpression>();
     }
 
-    public ArrayList<AST> getChildren() {
+    @Override
+    public String solve(Context context) {
+        for(AbstractExpression child : children) {
+            child.solve(context);
+        }
+        return "";
+    }
+
+    public ArrayList<AbstractExpression> getChildren() {
         return children;
     }
 }

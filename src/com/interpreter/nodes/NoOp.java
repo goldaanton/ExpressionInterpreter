@@ -1,6 +1,10 @@
 package com.interpreter.nodes;
 
-import com.interpreter.nodes.AST;
+import com.interpreter.solvers.Context;
 
-public class NoOp extends AST {
+public class NoOp implements AbstractExpression {
+    @Override
+    public String solve(Context context) {
+        return null;
+    }
 }

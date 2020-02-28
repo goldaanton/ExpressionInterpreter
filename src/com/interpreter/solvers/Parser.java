@@ -30,7 +30,7 @@ public class Parser {
             error();
     }
 
-    private AST factor() {
+    private AbstractExpression factor() {
 
         /*
          *       factor : PLUS  factor | MINUS factor | INTEGER
@@ -50,7 +50,7 @@ public class Parser {
             return new Num(token);
         } else if (token.getType() == TokenType.LPARENTHESIS) {
             eat(TokenType.LPARENTHESIS);
-            AST node = expr();
+            AbstractExpression node = expr();
             eat(TokenType.RPARENTHESIS);
             return node;
         } else {
@@ -58,13 +58,13 @@ public class Parser {
         }
     }
 
-    private AST term() {
+    private AbstractExpression term() {
 
         /*
          *       term : factor ((MUL | DIV) factor)*
          */
 
-        AST node = factor();
+        AbstractExpression node = factor();
 
         while (currentToken.getType() == TokenType.DIVISION || currentToken.getType() == TokenType.MULTIPLICATION) {
             Token token = currentToken;
@@ -78,7 +78,7 @@ public class Parser {
         return node;
     }
 
-    private AST expr() {
+    private AbstractExpression expr() {
 
         /*
          *       expr   : term ((PLUS | MINUS) term)*
@@ -86,7 +86,7 @@ public class Parser {
          *       factor : INTEGER | LPARENTHESIS expr RPARENTHESIS
          */
 
-        AST node = term();
+        AbstractExpression node = term();
 
         while (currentToken.getType() == TokenType.ADDITION || currentToken.getType() == TokenType.SUBTRACTION) {
             Token token = currentToken;
@@ -100,32 +100,32 @@ public class Parser {
         return node;
     }
 
-    private AST program() {
-        AST node = compoundStatement();
+    private AbstractExpression program() {
+        AbstractExpression node = compoundStatement();
         eat(TokenType.DOT);
         return node;
     }
 
-    private AST compoundStatement() {
+    private AbstractExpression compoundStatement() {
         eat(TokenType.BEGIN);
-        ArrayList<AST> nodes = statementList();
+        ArrayList<AbstractExpression> nodes = statementList();
         eat(TokenType.END);
 
         Compound root = new Compound();
-        for(AST node : nodes) {
+        for(AbstractExpression node : nodes) {
             root.getChildren().add(node);
         }
         return root;
     }
 
-    private ArrayList<AST> statementList() {
+    private ArrayList<AbstractExpression> statementList() {
         /*
          *      statement_list : statement | statement SEMI statement_list
          */
 
-        AST node = statement();
+        AbstractExpression node = statement();
 
-        ArrayList<AST> result = new ArrayList<AST>();
+        ArrayList<AbstractExpression> result = new ArrayList<AbstractExpression>();
         result.add(node);
 
         while (currentToken.getType() == TokenType.SEMI) {
@@ -139,7 +139,7 @@ public class Parser {
         return result;
     }
 
-    private AST statement() {
+    private AbstractExpression statement() {
         /*
          *      statement : compound_statement | assignment_statement | empty
          */
@@ -152,29 +152,29 @@ public class Parser {
             return empty();
     }
 
-    private AST assignmentStatement() {
+    private AbstractExpression assignmentStatement() {
         /*
          *      assignment_statement : variable ASSIGN expr
          */
 
-        AST left = variable();
+        AbstractExpression left = variable();
         Token token = currentToken;
         eat(TokenType.ASSIGN);
-        AST right = expr();
+        AbstractExpression right = expr();
         return  new Assign((Var)left, token, right);
     }
 
-    private AST variable() {
+    private AbstractExpression variable() {
         /*
          *      variable : ID
          */
 
-        AST node = new Var(currentToken);
+        AbstractExpression node = new Var(currentToken);
         eat(TokenType.ID);
         return node;
     }
 
-    private AST empty() {
+    private AbstractExpression empty() {
         /*
          *      An empty production
          */
@@ -182,8 +182,8 @@ public class Parser {
         return new NoOp();
     }
 
-    public AST parse() {
-        AST node = program();
+    public AbstractExpression parse() {
+        AbstractExpression node = program();
         if (currentToken.getType() != TokenType.EOF)
             error();
         return node;

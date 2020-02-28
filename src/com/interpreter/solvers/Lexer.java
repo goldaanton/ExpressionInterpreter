@@ -28,7 +28,7 @@ public class Lexer {
         RESERVED_KEYWORDS.put(endToken.getValue(), endToken);
     }
 
-    Lexer(String expression) {
+    public Lexer(String expression) {
         this.expression = expression;
         this.pos = 0;
         this.currentChar = expression.charAt(pos);
