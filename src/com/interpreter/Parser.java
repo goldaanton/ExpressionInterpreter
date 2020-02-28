@@ -1,7 +1,6 @@
 package com.interpreter;
 
 import static java.lang.System.exit;
-import static java.lang.System.in;
 
 public class Parser {
 
@@ -26,6 +25,11 @@ public class Parser {
     }
 
     private AST factor() {
+
+        /*
+         *       factor : (PLUS | MINUS) factor | INTEGER | LPAREN expr RPAREN
+         */
+
         Token token = currentToken;
 
         if(token.getType() == TokenType.ADDITION) {
@@ -49,6 +53,11 @@ public class Parser {
     }
 
     private AST term() {
+
+        /*
+         *       term : factor ((MUL | DIV) factor)*
+         */
+
         AST node = factor();
 
         while (currentToken.getType() == TokenType.DIVISION || currentToken.getType() == TokenType.MULTIPLICATION) {
@@ -64,6 +73,13 @@ public class Parser {
     }
 
     private AST expr() {
+
+        /*
+         *       expr   : term ((PLUS | MINUS) term)*
+         *       term   : factor ((MUL | DIV) factor)*
+         *       factor : INTEGER | LPARENTHESIS expr RPARENTHESIS
+         */
+
         AST node = term();
 
         while (currentToken.getType() == TokenType.ADDITION || currentToken.getType() == TokenType.SUBTRACTION) {

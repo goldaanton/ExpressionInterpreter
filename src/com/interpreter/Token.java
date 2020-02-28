@@ -17,8 +17,4 @@ public class Token {
     public String getValue() {
         return this.value;
     }
-
-    public String getToken() {
-        return String.format("Token(%s, %s)", type, value);
-    }
 }
