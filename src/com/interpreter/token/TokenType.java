@@ -1,4 +1,4 @@
-package com.interpreter;
+package com.interpreter.token;
 
 public enum TokenType {
     INTEGER,
@@ -8,5 +8,11 @@ public enum TokenType {
     MULTIPLICATION,
     LPARENTHESIS,
     RPARENTHESIS,
-    EOF
+    EOF,
+    BEGIN,
+    END,
+    DOT,
+    ID,
+    ASSIGN,
+    SEMI
 }

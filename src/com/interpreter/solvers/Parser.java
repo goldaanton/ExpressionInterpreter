@@ -1,4 +1,10 @@
-package com.interpreter;
+package com.interpreter.solvers;
+
+import com.interpreter.nodes.*;
+import com.interpreter.token.Token;
+import com.interpreter.token.TokenType;
+
+import java.util.ArrayList;
 
 import static java.lang.System.exit;
 
@@ -27,7 +33,8 @@ public class Parser {
     private AST factor() {
 
         /*
-         *       factor : (PLUS | MINUS) factor | INTEGER | LPAREN expr RPAREN
+         *       factor : PLUS  factor | MINUS factor | INTEGER
+         *              | LPAREN expr RPAREN | variable
          */
 
         Token token = currentToken;
@@ -47,8 +54,7 @@ public class Parser {
             eat(TokenType.RPARENTHESIS);
             return node;
         } else {
-            error();
-            return null;
+            return variable();
         }
     }
 
@@ -94,7 +100,92 @@ public class Parser {
         return node;
     }
 
+    private AST program() {
+        AST node = compoundStatement();
+        eat(TokenType.DOT);
+        return node;
+    }
+
+    private AST compoundStatement() {
+        eat(TokenType.BEGIN);
+        ArrayList<AST> nodes = statementList();
+        eat(TokenType.END);
+
+        Compound root = new Compound();
+        for(AST node : nodes) {
+            root.getChildren().add(node);
+        }
+        return root;
+    }
+
+    private ArrayList<AST> statementList() {
+        /*
+         *      statement_list : statement | statement SEMI statement_list
+         */
+
+        AST node = statement();
+
+        ArrayList<AST> result = new ArrayList<AST>();
+        result.add(node);
+
+        while (currentToken.getType() == TokenType.SEMI) {
+            eat(TokenType.SEMI);
+            result.add(statement());
+        }
+
+        if(currentToken.getType() == TokenType.ID)
+            error();
+
+        return result;
+    }
+
+    private AST statement() {
+        /*
+         *      statement : compound_statement | assignment_statement | empty
+         */
+
+        if(currentToken.getType() == TokenType.BEGIN)
+            return compoundStatement();
+        else if (currentToken.getType() == TokenType.ID)
+            return assignmentStatement();
+        else
+            return empty();
+    }
+
+    private AST assignmentStatement() {
+        /*
+         *      assignment_statement : variable ASSIGN expr
+         */
+
+        AST left = variable();
+        Token token = currentToken;
+        eat(TokenType.ASSIGN);
+        AST right = expr();
+        return  new Assign((Var)left, token, right);
+    }
+
+    private AST variable() {
+        /*
+         *      variable : ID
+         */
+
+        AST node = new Var(currentToken);
+        eat(TokenType.ID);
+        return node;
+    }
+
+    private AST empty() {
+        /*
+         *      An empty production
+         */
+
+        return new NoOp();
+    }
+
     public AST parse() {
-        return expr();
+        AST node = program();
+        if (currentToken.getType() != TokenType.EOF)
+            error();
+        return node;
     }
 }

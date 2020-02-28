@@ -1,4 +1,6 @@
-package com.interpreter;
+package com.interpreter.nodes;
+
+import com.interpreter.token.Token;
 
 public class Num extends AST {
 
@@ -8,7 +10,7 @@ public class Num extends AST {
         this.token = token;
     }
 
-    public String getValue() {
-        return token.getValue();
+    public Token getNumToken() {
+        return token;
     }
 }

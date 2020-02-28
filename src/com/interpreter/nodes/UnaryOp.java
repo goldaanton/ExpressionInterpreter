@@ -1,4 +1,6 @@
-package com.interpreter;
+package com.interpreter.nodes;
+
+import com.interpreter.token.Token;
 
 public class UnaryOp extends AST {
 

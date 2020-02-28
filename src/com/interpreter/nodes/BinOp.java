@@ -1,4 +1,6 @@
-package com.interpreter;
+package com.interpreter.nodes;
+
+import com.interpreter.token.Token;
 
 public class BinOp extends AST {
 
@@ -12,8 +14,8 @@ public class BinOp extends AST {
         this.op = op;
     }
 
-    public TokenType getOp() {
-        return this.op.getType();
+    public Token getOp() {
+        return this.op;
     }
 
     public AST getLeft() {

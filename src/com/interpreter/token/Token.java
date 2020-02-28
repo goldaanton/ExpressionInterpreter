@@ -1,4 +1,4 @@
-package com.interpreter;
+package com.interpreter.token;
 
 public class Token {
 
