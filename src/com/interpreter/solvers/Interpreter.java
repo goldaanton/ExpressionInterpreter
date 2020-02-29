@@ -2,11 +2,6 @@ package com.interpreter.solvers;
 
 
 import com.interpreter.nodes.*;
-import com.interpreter.token.TokenType;
-
-import java.util.HashMap;
-
-import static java.lang.System.exit;
 
 public class Interpreter {
 

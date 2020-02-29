@@ -2,8 +2,7 @@ package com.interpreter.nodes;
 
 import com.interpreter.solvers.Context;
 import com.interpreter.token.Token;
-
-import static java.lang.System.exit;
+import java.util.Optional;
 
 public class Var implements AbstractExpression {
 
@@ -14,16 +13,11 @@ public class Var implements AbstractExpression {
     }
 
     @Override
-    public Object solve(Context context) {
+    public Optional<?> solve(Context context) {
 
-        String varName = (String)token.getValue();
-        Object val = context.getGlobalScope().get(varName);
+        String varName = token.getValue(String.class).orElseThrow(RuntimeException::new);
 
-        if(val == "") {
-            System.out.println("There is no such variable");
-            exit(1);
-        }
-        return val;
+        return Optional.of(context.getGlobalScope().get(varName)).orElseThrow(RuntimeException::new);
     }
 
     public Token getVarToken() {

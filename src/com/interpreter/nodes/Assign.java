@@ -3,6 +3,8 @@ package com.interpreter.nodes;
 import com.interpreter.solvers.Context;
 import com.interpreter.token.Token;
 
+import java.util.Optional;
+
 public class Assign implements AbstractExpression {
 
     private Var left;
@@ -16,10 +18,10 @@ public class Assign implements AbstractExpression {
     }
 
     @Override
-    public Object solve(Context context) {
-        String varName = (String)left.getVarToken().getValue();
-        Object varValue = right.solve(context);
+    public Optional<?> solve(Context context) {
+        String varName = left.getVarToken().getValue(String.class).orElseThrow(RuntimeException::new);
+        Optional<?> varValue = right.solve(context);
         context.getGlobalScope().put(varName, varValue);
-        return null;
+        return Optional.empty();
     }
 }

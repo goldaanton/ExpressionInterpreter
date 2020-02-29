@@ -1,5 +1,7 @@
 package com.interpreter.token;
 
+import java.util.Optional;
+
 public class Token {
 
     private TokenType type;
@@ -10,11 +12,20 @@ public class Token {
         this.value = value;
     }
 
+    public Token(TokenType type) {
+        this.type = type;
+        this.value = Optional.empty();
+    }
+
     public TokenType getType() {
         return this.type;
     }
 
-    public Object getValue() {
-        return this.value;
+    public <T> Optional<T> getValue(Class<T> expectedType) {
+        if (expectedType.isInstance(value))
+            return Optional.ofNullable(expectedType.cast(value));
+        else
+            // TODO throw exception providing type checking has failed
+            throw new RuntimeException();
     }
 }

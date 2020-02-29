@@ -3,8 +3,10 @@ package com.interpreter.solvers;
 import com.interpreter.token.Token;
 import com.interpreter.token.TokenType;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.lang.System.exit;
 
@@ -19,13 +21,19 @@ public class Lexer {
     private static Map<String, Token> RESERVED_KEYWORDS;
 
     static {
-        RESERVED_KEYWORDS = new HashMap<String, Token>();
+        HashMap<String, Token> temporaryMap = new HashMap<>();
 
         Token beginToken = new Token(TokenType.BEGIN, "BEGIN");
         Token endToken = new Token(TokenType.END, "END");
 
-        RESERVED_KEYWORDS.put((String)beginToken.getValue(), beginToken);
-        RESERVED_KEYWORDS.put((String)endToken.getValue(), endToken);
+        temporaryMap.put(beginToken.getValue(String.class).orElseThrow(RuntimeException::new), beginToken);
+        temporaryMap.put(endToken.getValue(String.class).orElseThrow(RuntimeException::new), endToken);
+
+        RESERVED_KEYWORDS = Collections.unmodifiableMap(temporaryMap);
+
+//
+//        RESERVED_KEYWORDS.put((String)beginToken.getValue(), beginToken);
+//        RESERVED_KEYWORDS.put((String)endToken.getValue(), endToken);
     }
 
     public Lexer(String expression) {
@@ -53,12 +61,12 @@ public class Lexer {
     }
 
     private int getInteger() {
-        StringBuilder integer = new StringBuilder();
+        StringBuilder integerString = new StringBuilder();
         while(currentChar != none && Character.isDigit(currentChar)) {
-            integer.append(currentChar);
+            integerString.append(currentChar);
             advance();
         }
-        return Integer.parseInt(integer.toString());
+        return Integer.parseInt(integerString.toString());
     }
 
     public Token getNextToken() {
@@ -67,47 +75,12 @@ public class Lexer {
                 skipWhiteSpaces();
             if (Character.isDigit(currentChar))
                 return new Token(TokenType.INTEGER, getInteger());
-            if (currentChar == '+') {
-                advance();
-                return new Token(TokenType.ADDITION, "+");
-            }
-            if (currentChar == '-') {
-                advance();
-                return new Token(TokenType.SUBTRACTION, "-");
-            }
-            if (currentChar == '*') {
-                advance();
-                return new Token(TokenType.MULTIPLICATION, "*");
-            }
-            if (currentChar == '/') {
-                advance();
-                return new Token(TokenType.DIVISION, "/");
-            }
-            if (currentChar == '(') {
-                advance();
-                return new Token(TokenType.LPARENTHESIS, "(");
-            }
-            if (currentChar == ')') {
-                advance();
-                return new Token(TokenType.RPARENTHESIS, ")");
-            }
             if(Character.isAlphabetic(currentChar)) {
                 return id();
             }
-            if(currentChar == '=') {
-                advance();
-                return new Token(TokenType.ASSIGN, "=");
-            }
-            if(currentChar == ';') {
-                advance();
-                return new Token(TokenType.SEMI, ";");
-            }
-            if(currentChar == '.') {
-                advance();
-                return new Token(TokenType.DOT, ".");
-            }
-
-            error();
+            Token token = new Token(TokenType.getTokenTypeByAbbreviation(currentChar));
+            advance();
+            return token;
         }
         return new Token(TokenType.EOF, null);
     }

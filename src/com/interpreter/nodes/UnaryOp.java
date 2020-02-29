@@ -3,6 +3,7 @@ package com.interpreter.nodes;
 import com.interpreter.solvers.Context;
 import com.interpreter.token.Token;
 import com.interpreter.token.TokenType;
+import java.util.Optional;
 
 public class UnaryOp implements AbstractExpression {
 
@@ -15,13 +16,17 @@ public class UnaryOp implements AbstractExpression {
     }
 
     @Override
-    public Object solve(Context context) {
+    public Optional<?> solve(Context context) {
         TokenType opType = op.getType();
 
+        int opValue = ((Optional<Integer>)expr.solve(context))
+                .orElseThrow(RuntimeException::new);
+
+
         if(opType == TokenType.ADDITION)
-            return expr.solve(context);
+            return Optional.of(opValue);
         else if (opType == TokenType.SUBTRACTION)
-            return (-1 * (Integer)expr.solve(context));
+            return Optional.of(-1 * opValue);
         return null;
     }
 }

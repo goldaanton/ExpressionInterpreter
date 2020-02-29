@@ -2,6 +2,7 @@ package com.interpreter.nodes;
 
 import com.interpreter.solvers.Context;
 import com.interpreter.token.Token;
+import java.util.Optional;
 
 public class Num implements AbstractExpression {
 
@@ -12,7 +13,7 @@ public class Num implements AbstractExpression {
     }
 
     @Override
-    public Object solve(Context context) {
-        return token.getValue();
+    public Optional<?> solve(Context context) {
+        return token.getValue(Integer.class);
     }
 }

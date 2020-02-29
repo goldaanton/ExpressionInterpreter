@@ -4,6 +4,8 @@ import com.interpreter.solvers.Context;
 import com.interpreter.token.Token;
 import com.interpreter.token.TokenType;
 
+import java.util.Optional;
+
 public class BinOp implements AbstractExpression {
 
     private AbstractExpression right;
@@ -17,19 +19,21 @@ public class BinOp implements AbstractExpression {
     }
 
     @Override
-    public Object solve(Context context) {
-        Object leftResult = left.solve(context);
-        Object rightResult = right.solve(context);
+    public Optional<?> solve(Context context) {
+        int leftValue = ((Optional<Integer>)left.solve(context))
+                .orElseThrow(RuntimeException::new);
+        int rightValue = ((Optional<Integer>)right.solve(context))
+                .orElseThrow(RuntimeException::new);
 
         if(op.getType() == TokenType.ADDITION) {
-            return (Integer)leftResult + (Integer)rightResult;
+            return Optional.of(leftValue + rightValue);
         } else if (op.getType() == TokenType.SUBTRACTION) {
-            return (Integer)leftResult - (Integer)rightResult;
+            return Optional.of(leftValue - rightValue);
         } else if (op.getType() == TokenType.DIVISION) {
-            return (Integer)leftResult / (Integer)rightResult;
+            return Optional.of(leftValue / rightValue);
         } else if (op.getType() == TokenType.MULTIPLICATION) {
-            return (Integer)leftResult * (Integer)rightResult;
+            return Optional.of(leftValue * rightValue);
         }
-        return null;
+        throw new RuntimeException();
     }
 }
