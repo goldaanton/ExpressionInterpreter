@@ -6,20 +6,30 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public enum TokenType {
-    INTEGER('d'),
+
     ADDITION('+'),
     SUBTRACTION('-'),
     DIVISION('/'),
     MULTIPLICATION('*'),
-    LPARENTHESIS('('),
-    RPARENTHESIS(')'),
-    EOF('\0'),
+
+    L_PARENTHESIS('('),
+    R_PARENTHESIS(')'),
+
+    INTEGER('d'),
+
     BEGIN('b'),
     END('e'),
-    DOT('.'),
+
     ID('i'),
+
     ASSIGN('='),
-    SEMI(';');
+
+    SEMI(';'),
+    DOT('.'),
+
+    EOF('\0');
+
+    private char tokenTypeAbbreviation;
 
     private static final Map<Character, TokenType> TOKEN_ABBREVIATION = Collections.unmodifiableMap(Arrays.stream(values())
             .collect(Collectors.toMap(TokenType::getTokenTypeAbbreviation, tokenType -> tokenType)));
@@ -31,8 +41,6 @@ public enum TokenType {
     public char getTokenTypeAbbreviation() {
         return tokenTypeAbbreviation;
     }
-
-    private char tokenTypeAbbreviation;
 
     TokenType(char tokenTypeAbbreviation) {
         this.tokenTypeAbbreviation = tokenTypeAbbreviation;

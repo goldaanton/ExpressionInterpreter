@@ -14,7 +14,7 @@ public class Token {
 
     public Token(TokenType type) {
         this.type = type;
-        this.value = Optional.empty();
+        this.value = null;
     }
 
     public TokenType getType() {

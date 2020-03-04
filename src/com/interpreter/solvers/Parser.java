@@ -30,6 +30,16 @@ public class Parser {
             error();
     }
 
+    private AbstractExpression variable() {
+        /*
+         *      variable : ID
+         */
+
+        AbstractExpression node = new VarExpression(currentToken);
+        eat(TokenType.ID);
+        return node;
+    }
+
     private AbstractExpression factor() {
 
         /*
@@ -41,17 +51,17 @@ public class Parser {
 
         if(token.getType() == TokenType.ADDITION) {
             eat(TokenType.ADDITION);
-            return new UnaryOp(token, factor());
+            return new UnaryOpExpression(token, factor());
         } else if (token.getType() == TokenType.SUBTRACTION) {
             eat(TokenType.SUBTRACTION);
-            return new UnaryOp(token, factor());
+            return new UnaryOpExpression(token, factor());
         } else if (token.getType() == TokenType.INTEGER) {
             eat(TokenType.INTEGER);
-            return new Num(token);
-        } else if (token.getType() == TokenType.LPARENTHESIS) {
-            eat(TokenType.LPARENTHESIS);
+            return new NumExpression(token);
+        } else if (token.getType() == TokenType.L_PARENTHESIS) {
+            eat(TokenType.L_PARENTHESIS);
             AbstractExpression node = expr();
-            eat(TokenType.RPARENTHESIS);
+            eat(TokenType.R_PARENTHESIS);
             return node;
         } else {
             return variable();
@@ -73,7 +83,7 @@ public class Parser {
             } else if (token.getType() == TokenType.DIVISION) {
                 eat(TokenType.DIVISION);
             }
-            node = new BinOp(node, token, factor());
+            node = new BinOpExpression(node, token, factor());
         }
         return node;
     }
@@ -95,27 +105,43 @@ public class Parser {
             } else if (token.getType() == TokenType.SUBTRACTION) {
                 eat(TokenType.SUBTRACTION);
             }
-            node = new BinOp(node, token, term());
+            node = new BinOpExpression(node, token, term());
         }
         return node;
     }
 
-    private AbstractExpression program() {
-        AbstractExpression node = compoundStatement();
-        eat(TokenType.DOT);
-        return node;
+
+    private AbstractExpression assignmentStatement() {
+        /*
+         *      assignment_statement : variable ASSIGN expr
+         */
+
+        AbstractExpression left = variable();
+        Token token = currentToken;
+        eat(TokenType.ASSIGN);
+        AbstractExpression right = expr();
+        return  new AssignExpression((VarExpression)left, right);
     }
 
-    private AbstractExpression compoundStatement() {
-        eat(TokenType.BEGIN);
-        ArrayList<AbstractExpression> nodes = statementList();
-        eat(TokenType.END);
+    private AbstractExpression empty() {
+        /*
+         *      An empty production
+         */
 
-        Compound root = new Compound();
-        for(AbstractExpression node : nodes) {
-            root.getChildren().add(node);
-        }
-        return root;
+        return new NoOpExpression();
+    }
+
+    private AbstractExpression statement() {
+        /*
+         *      statement : compound_statement | assignment_statement | empty
+         */
+
+        if(currentToken.getType() == TokenType.BEGIN)
+            return compoundStatement();
+        else if (currentToken.getType() == TokenType.ID)
+            return assignmentStatement();
+        else
+            return empty();
     }
 
     private ArrayList<AbstractExpression> statementList() {
@@ -139,53 +165,28 @@ public class Parser {
         return result;
     }
 
-    private AbstractExpression statement() {
-        /*
-         *      statement : compound_statement | assignment_statement | empty
-         */
+    private AbstractExpression compoundStatement() {
+        eat(TokenType.BEGIN);
+        ArrayList<AbstractExpression> nodes = statementList();
+        eat(TokenType.END);
 
-        if(currentToken.getType() == TokenType.BEGIN)
-            return compoundStatement();
-        else if (currentToken.getType() == TokenType.ID)
-            return assignmentStatement();
-        else
-            return empty();
+        CompoundExpression root = new CompoundExpression();
+        for(AbstractExpression node : nodes) {
+            root.getChildren().add(node);
+        }
+        return root;
     }
 
-    private AbstractExpression assignmentStatement() {
-        /*
-         *      assignment_statement : variable ASSIGN expr
-         */
-
-        AbstractExpression left = variable();
-        Token token = currentToken;
-        eat(TokenType.ASSIGN);
-        AbstractExpression right = expr();
-        return  new Assign((Var)left, token, right);
-    }
-
-    private AbstractExpression variable() {
-        /*
-         *      variable : ID
-         */
-
-        AbstractExpression node = new Var(currentToken);
-        eat(TokenType.ID);
+    private AbstractExpression program() {
+        AbstractExpression node = compoundStatement();
+        eat(TokenType.DOT);
         return node;
-    }
-
-    private AbstractExpression empty() {
-        /*
-         *      An empty production
-         */
-
-        return new NoOp();
     }
 
     public AbstractExpression parse() {
-        AbstractExpression node = program();
+        AbstractExpression root = program();
         if (currentToken.getType() != TokenType.EOF)
             error();
-        return node;
+        return root;
     }
 }

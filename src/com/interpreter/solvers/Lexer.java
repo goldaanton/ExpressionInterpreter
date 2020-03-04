@@ -6,9 +6,6 @@ import com.interpreter.token.TokenType;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-
-import static java.lang.System.exit;
 
 public class Lexer {
 
@@ -30,21 +27,12 @@ public class Lexer {
         temporaryMap.put(endToken.getValue(String.class).orElseThrow(RuntimeException::new), endToken);
 
         RESERVED_KEYWORDS = Collections.unmodifiableMap(temporaryMap);
-
-//
-//        RESERVED_KEYWORDS.put((String)beginToken.getValue(), beginToken);
-//        RESERVED_KEYWORDS.put((String)endToken.getValue(), endToken);
     }
 
     public Lexer(String expression) {
         this.expression = expression;
         this.pos = 0;
         this.currentChar = expression.charAt(pos);
-    }
-
-    private void error() {
-        System.out.println("Invalid character");
-        exit(1);
     }
 
     private void advance() {
@@ -70,19 +58,16 @@ public class Lexer {
     }
 
     public Token getNextToken() {
-        while (currentChar != none) {
-            if (Character.isWhitespace(currentChar))
-                skipWhiteSpaces();
-            if (Character.isDigit(currentChar))
-                return new Token(TokenType.INTEGER, getInteger());
-            if(Character.isAlphabetic(currentChar)) {
-                return id();
-            }
-            Token token = new Token(TokenType.getTokenTypeByAbbreviation(currentChar));
-            advance();
-            return token;
+        if (Character.isWhitespace(currentChar))
+            skipWhiteSpaces();
+        if (Character.isDigit(currentChar))
+            return new Token(TokenType.INTEGER, getInteger());
+        if (Character.isAlphabetic(currentChar)) {
+            return id();
         }
-        return new Token(TokenType.EOF, null);
+        Token token = new Token(TokenType.getTokenTypeByAbbreviation(currentChar));
+        advance();
+        return token;
     }
 
 //    private char peek() {

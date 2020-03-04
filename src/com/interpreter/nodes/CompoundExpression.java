@@ -5,11 +5,11 @@ import com.interpreter.solvers.Context;
 import java.util.ArrayList;
 import java.util.Optional;
 
-public class Compound implements AbstractExpression {
+public class CompoundExpression implements AbstractExpression {
 
     private ArrayList<AbstractExpression> children;
 
-    public Compound() {
+    public CompoundExpression() {
         children = new ArrayList<AbstractExpression>();
     }
 
@@ -18,7 +18,7 @@ public class Compound implements AbstractExpression {
         for(AbstractExpression child : children) {
             child.solve(context);
         }
-        return null;
+        return Optional.empty() ;
     }
 
     public ArrayList<AbstractExpression> getChildren() {

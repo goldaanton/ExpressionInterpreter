@@ -6,13 +6,13 @@ import com.interpreter.token.TokenType;
 
 import java.util.Optional;
 
-public class BinOp implements AbstractExpression {
+public class BinOpExpression implements AbstractExpression {
 
     private AbstractExpression right;
     private AbstractExpression left;
     private Token op;
 
-    public BinOp(AbstractExpression left, Token op, AbstractExpression right) {
+    public BinOpExpression(AbstractExpression left, Token op, AbstractExpression right) {
         this.left = left;
         this.right = right;
         this.op = op;

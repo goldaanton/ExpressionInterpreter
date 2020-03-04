@@ -2,13 +2,14 @@ package com.interpreter.nodes;
 
 import com.interpreter.solvers.Context;
 import com.interpreter.token.Token;
+
 import java.util.Optional;
 
-public class Num implements AbstractExpression {
+public class NumExpression implements AbstractExpression {
 
     private Token token;
 
-    public Num(Token token) {
+    public NumExpression(Token token) {
         this.token = token;
     }
 

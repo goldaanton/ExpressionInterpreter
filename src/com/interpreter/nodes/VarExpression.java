@@ -2,21 +2,20 @@ package com.interpreter.nodes;
 
 import com.interpreter.solvers.Context;
 import com.interpreter.token.Token;
+
 import java.util.Optional;
 
-public class Var implements AbstractExpression {
+public class VarExpression implements AbstractExpression {
 
     private Token token;
 
-    public Var(Token token) {
+    public VarExpression(Token token) {
         this.token = token;
     }
 
     @Override
     public Optional<?> solve(Context context) {
-
         String varName = token.getValue(String.class).orElseThrow(RuntimeException::new);
-
         return Optional.of(context.getGlobalScope().get(varName)).orElseThrow(RuntimeException::new);
     }
 

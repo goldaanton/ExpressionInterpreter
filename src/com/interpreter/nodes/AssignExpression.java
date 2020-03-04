@@ -1,19 +1,16 @@
 package com.interpreter.nodes;
 
 import com.interpreter.solvers.Context;
-import com.interpreter.token.Token;
 
 import java.util.Optional;
 
-public class Assign implements AbstractExpression {
+public class AssignExpression implements AbstractExpression {
 
-    private Var left;
+    private VarExpression left;
     private AbstractExpression right;
-    private Token op;
 
-    public Assign(Var left, Token op, AbstractExpression right) {
+    public AssignExpression(VarExpression left, AbstractExpression right) {
         this.left = left;
-        this.op = op;
         this.right = right;
     }
 
