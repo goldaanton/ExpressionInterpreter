@@ -3,6 +3,7 @@ package com.interpreter.token;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public enum TokenType {
@@ -15,17 +16,22 @@ public enum TokenType {
     L_PARENTHESIS('('),
     R_PARENTHESIS(')'),
 
-    INTEGER('d'),
+    INTEGER('i'),
+    DOUBLE('f'),
 
     BEGIN('b'),
     END('e'),
+    PROGRAM('p'),
+    VAR('v'),
 
-    ID('i'),
+    ID('d'),
 
     ASSIGN('='),
 
     SEMI(';'),
     DOT('.'),
+    COLON(':'),
+    COMMA(','),
 
     EOF('\0');
 
@@ -40,6 +46,17 @@ public enum TokenType {
 
     public static TokenType getTokenTypeByAbbreviation(char abbreviation) {
         return TOKEN_ABBREVIATION.getOrDefault(abbreviation, EOF);
+    }
+
+    public static Optional<?> getDefaultValue(TokenType type) {
+        switch (type) {
+            case INTEGER:
+                return Optional.of(0);
+            case DOUBLE:
+                return Optional.of(0.0);
+            default:
+                throw new RuntimeException();
+        }
     }
 
     public char getTokenTypeAbbreviation() {

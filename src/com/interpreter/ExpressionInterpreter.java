@@ -14,7 +14,7 @@ public class ExpressionInterpreter {
     public static void main(String[] args) {
         StringBuilder expression = new StringBuilder();
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("file.txt"));
+            BufferedReader reader = new BufferedReader(new FileReader("test\\file.txt"));
             String line = null;
             while((line = reader.readLine()) != null)
                 expression.append(line);
@@ -27,6 +27,7 @@ public class ExpressionInterpreter {
         Scanner scanner = new Scanner(System.in);
         Lexer lexer = new Lexer(expression.toString());
         Parser parser = new Parser(lexer);
+//        parser.parse();
         Interpreter interpreter = new Interpreter(parser);
         interpreter.interpret();
         interpreter.getContext().getGlobalScope().forEach((key, value) -> System.out.println(key + " = " + value));

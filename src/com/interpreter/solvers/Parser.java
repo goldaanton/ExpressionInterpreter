@@ -4,7 +4,10 @@ import com.interpreter.nodes.*;
 import com.interpreter.token.Token;
 import com.interpreter.token.TokenType;
 
+import javax.lang.model.element.VariableElement;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 import static java.lang.System.exit;
 
@@ -28,6 +31,65 @@ public class Parser {
             currentToken = lexer.getNextToken();
         else
             error();
+    }
+
+    private TypeExpression typeSpecification() {
+        /*
+         * type_spec : INTEGER | REAL
+         */
+
+        Token token = currentToken;
+        if(currentToken.getType() == TokenType.INTEGER)
+            eat(TokenType.INTEGER);
+        else
+            eat(TokenType.DOUBLE);
+        return new TypeExpression(token);
+    }
+
+    private List<DeclarationExpression> variableDeclaration() {
+        /*
+         *      variable_declaration : ID (COMMA ID)* COLON type_spec
+         */
+
+        List<VarExpression> varNodes = new ArrayList<>();
+        varNodes.add(new VarExpression(currentToken));
+        eat(TokenType.ID);
+
+        while(currentToken.getType() == TokenType.COMMA) {
+            eat(TokenType.COMMA);
+            varNodes.add(new VarExpression(currentToken));
+            eat(TokenType.ID);
+        }
+
+        eat(TokenType.COLON);
+
+        TypeExpression typeExpression = typeSpecification();
+
+        List<DeclarationExpression> variableDeclaration = new ArrayList<>();
+
+        for(VarExpression varExpression : varNodes) {
+            variableDeclaration.add(new VarDeclarationExpression(varExpression, typeExpression.getToken().getType()));
+        }
+
+        return variableDeclaration;
+    }
+
+    private List<DeclarationExpression> declaration() {
+        /*
+         *      declarations : VAR (variable_declaration SEMI)+ | empty
+         */
+
+        List<DeclarationExpression>  declaration = new ArrayList<>();
+        if(currentToken.getType() == TokenType.VAR) {
+            eat(TokenType.VAR);
+
+            while (currentToken.getType() == TokenType.ID) {
+                List<DeclarationExpression> varDel = variableDeclaration();
+                declaration.addAll(varDel);
+                eat(TokenType.SEMI);
+            }
+        }
+        return  declaration;
     }
 
     private AbstractExpression variable() {
@@ -57,6 +119,9 @@ public class Parser {
             return new UnaryOpExpression(token, factor());
         } else if (token.getType() == TokenType.INTEGER) {
             eat(TokenType.INTEGER);
+            return new NumExpression(token);
+        } else if (token.getType() == TokenType.DOUBLE) {
+            eat(TokenType.DOUBLE);
             return new NumExpression(token);
         } else if (token.getType() == TokenType.L_PARENTHESIS) {
             eat(TokenType.L_PARENTHESIS);
@@ -180,14 +245,33 @@ public class Parser {
         return root;
     }
 
-    private AbstractExpression program() {
+    private BlockExpression block() {
         /*
-         *      program : compoundStatement DOT
+         *      block : declaration compoundStatement
          */
 
-        AbstractExpression node = compoundStatement();
+        List<DeclarationExpression> declarationNodes = declaration();
+        CompoundExpression compoundExpression = (CompoundExpression)compoundStatement();
+
+        return new BlockExpression(declarationNodes, compoundExpression);
+    }
+
+    private AbstractExpression program() {
+        /*
+         *      program : PROGRAM variable SEMI block DOT
+         */
+
+        eat(TokenType.PROGRAM);
+        VarExpression varNode = (VarExpression) variable();
+        String programName = (varNode).getVarToken().getValue(String.class).orElseThrow(RuntimeException::new);
+        eat(TokenType.SEMI);
+
+        BlockExpression blockExpression = block();
+
+        ProgramExpression programExpression = new ProgramExpression(programName, blockExpression);
         eat(TokenType.DOT);
-        return node;
+
+        return programExpression;
     }
 
     public AbstractExpression parse() {
