@@ -10,7 +10,7 @@ public class CompoundExpression implements AbstractExpression {
     private ArrayList<AbstractExpression> children;
 
     public CompoundExpression() {
-        children = new ArrayList<AbstractExpression>();
+        children = new ArrayList<>();
     }
 
     @Override

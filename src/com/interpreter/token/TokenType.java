@@ -31,6 +31,10 @@ public enum TokenType {
 
     private char tokenTypeAbbreviation;
 
+    TokenType(char tokenTypeAbbreviation) {
+        this.tokenTypeAbbreviation = tokenTypeAbbreviation;
+    }
+
     private static final Map<Character, TokenType> TOKEN_ABBREVIATION = Collections.unmodifiableMap(Arrays.stream(values())
             .collect(Collectors.toMap(TokenType::getTokenTypeAbbreviation, tokenType -> tokenType)));
 
@@ -40,9 +44,5 @@ public enum TokenType {
 
     public char getTokenTypeAbbreviation() {
         return tokenTypeAbbreviation;
-    }
-
-    TokenType(char tokenTypeAbbreviation) {
-        this.tokenTypeAbbreviation = tokenTypeAbbreviation;
     }
 }

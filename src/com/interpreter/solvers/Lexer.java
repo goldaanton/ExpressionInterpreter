@@ -57,6 +57,17 @@ public class Lexer {
         return Integer.parseInt(integerString.toString());
     }
 
+    private Token id() {
+        StringBuilder result = new StringBuilder();
+
+        while(currentChar != none && Character.isAlphabetic(currentChar)) {
+            result.append(currentChar);
+            advance();
+        }
+
+        return RESERVED_KEYWORDS.getOrDefault(result.toString(), new Token(TokenType.ID, result.toString()));
+    }
+
     public Token getNextToken() {
         if (Character.isWhitespace(currentChar))
             skipWhiteSpaces();
@@ -77,15 +88,4 @@ public class Lexer {
 //        else
 //            return expression.charAt(peekPos);
 //    }
-
-    private Token id() {
-        StringBuilder result = new StringBuilder();
-
-        while(currentChar != none && Character.isAlphabetic(currentChar)) {
-            result.append(currentChar);
-            advance();
-        }
-
-        return RESERVED_KEYWORDS.getOrDefault(result.toString(), new Token(TokenType.ID, result.toString()));
-    }
 }

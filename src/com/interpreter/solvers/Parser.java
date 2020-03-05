@@ -92,8 +92,6 @@ public class Parser {
 
         /*
          *       expr   : term ((PLUS | MINUS) term)*
-         *       term   : factor ((MUL | DIV) factor)*
-         *       factor : INTEGER | LPARENTHESIS expr RPARENTHESIS
          */
 
         AbstractExpression node = term();
@@ -151,7 +149,7 @@ public class Parser {
 
         AbstractExpression node = statement();
 
-        ArrayList<AbstractExpression> result = new ArrayList<AbstractExpression>();
+        ArrayList<AbstractExpression> result = new ArrayList<>();
         result.add(node);
 
         while (currentToken.getType() == TokenType.SEMI) {
@@ -166,6 +164,11 @@ public class Parser {
     }
 
     private AbstractExpression compoundStatement() {
+        /*
+         *      compoundStatement : BEGIN statementList END
+         */
+
+
         eat(TokenType.BEGIN);
         ArrayList<AbstractExpression> nodes = statementList();
         eat(TokenType.END);
@@ -178,6 +181,10 @@ public class Parser {
     }
 
     private AbstractExpression program() {
+        /*
+         *      program : compoundStatement DOT
+         */
+
         AbstractExpression node = compoundStatement();
         eat(TokenType.DOT);
         return node;

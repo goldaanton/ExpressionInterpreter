@@ -22,7 +22,6 @@ public class UnaryOpExpression implements AbstractExpression {
         int opValue = ((Optional<Integer>)expr.solve(context))
                 .orElseThrow(RuntimeException::new);
 
-
         if(opType == TokenType.ADDITION)
             return Optional.of(opValue);
         else if (opType == TokenType.SUBTRACTION)
