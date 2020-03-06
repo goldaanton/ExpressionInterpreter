@@ -1,5 +1,6 @@
 package com.interpreter.nodes;
 
+import com.interpreter.semanticanalyzer.SymbolTable;
 import com.interpreter.solvers.Context;
 import com.interpreter.token.Token;
 import com.interpreter.token.TokenType;
@@ -13,6 +14,11 @@ public class UnaryOpExpression implements AbstractExpression {
     public UnaryOpExpression(Token op, AbstractExpression expr) {
         this.op = op;
         this.expr = expr;
+    }
+
+    @Override
+    public void analyzeNode(SymbolTable symbolTable) {
+        expr.analyzeNode(symbolTable);
     }
 
     @Override

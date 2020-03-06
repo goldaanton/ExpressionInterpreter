@@ -1,5 +1,6 @@
 package com.interpreter.nodes;
 
+import com.interpreter.semanticanalyzer.SymbolTable;
 import com.interpreter.solvers.Context;
 
 import java.util.Optional;
@@ -12,6 +13,13 @@ public class AssignExpression implements AbstractExpression {
     public AssignExpression(VarExpression left, AbstractExpression right) {
         this.left = left;
         this.right = right;
+    }
+
+    @Override
+    public void analyzeNode(SymbolTable symbolTable) {
+        String varName = left.getVarToken().getValue(String.class).orElseThrow(RuntimeException::new);
+        symbolTable.fetchSymbol(varName);
+        right.analyzeNode(symbolTable);
     }
 
     @Override

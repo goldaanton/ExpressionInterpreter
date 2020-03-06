@@ -1,4 +1,4 @@
-package com.interpreter.semanticanalizer;
+package com.interpreter.symbols;
 
 public class BuiltinTypeSymbol extends Symbol {
     public BuiltinTypeSymbol(String name) {

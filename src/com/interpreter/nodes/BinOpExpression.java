@@ -1,5 +1,6 @@
 package com.interpreter.nodes;
 
+import com.interpreter.semanticanalyzer.SymbolTable;
 import com.interpreter.solvers.Context;
 import com.interpreter.token.Token;
 import com.interpreter.token.TokenType;
@@ -16,6 +17,12 @@ public class BinOpExpression implements AbstractExpression {
         this.left = left;
         this.right = right;
         this.op = op;
+    }
+
+    @Override
+    public void analyzeNode(SymbolTable symbolTable) {
+        left.analyzeNode(symbolTable);
+        right.analyzeNode(symbolTable);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.interpreter.nodes;
 
+import com.interpreter.semanticanalyzer.SymbolTable;
 import com.interpreter.solvers.Context;
+import com.interpreter.symbols.Symbol;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -13,6 +15,11 @@ public class ProgramExpression implements AbstractExpression {
     public ProgramExpression(String name, BlockExpression block) {
         this.name = name;
         this.block = block;
+    }
+
+    @Override
+    public void analyzeNode(SymbolTable symbolTable) {
+        block.analyzeNode(symbolTable);
     }
 
     @Override

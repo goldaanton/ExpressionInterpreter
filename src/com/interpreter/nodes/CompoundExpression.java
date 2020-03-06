@@ -1,5 +1,6 @@
 package com.interpreter.nodes;
 
+import com.interpreter.semanticanalyzer.SymbolTable;
 import com.interpreter.solvers.Context;
 
 import java.util.ArrayList;
@@ -11,6 +12,13 @@ public class CompoundExpression implements AbstractExpression {
 
     public CompoundExpression() {
         children = new ArrayList<>();
+    }
+
+    @Override
+    public void analyzeNode(SymbolTable symbolTable) {
+        for(AbstractExpression child : children) {
+            child.analyzeNode(symbolTable);
+        }
     }
 
     @Override

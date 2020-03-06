@@ -1,5 +1,6 @@
 package com.interpreter.nodes;
 
+import com.interpreter.semanticanalyzer.SymbolTable;
 import com.interpreter.solvers.Context;
 import com.interpreter.token.Token;
 
@@ -15,6 +16,11 @@ public class TypeExpression implements AbstractExpression {
 
     public Token getToken() {
         return token;
+    }
+
+    @Override
+    public void analyzeNode(SymbolTable symbolTable) {
+
     }
 
     @Override

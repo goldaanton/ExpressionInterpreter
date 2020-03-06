@@ -1,5 +1,6 @@
 package com.interpreter.nodes;
 
+import com.interpreter.semanticanalyzer.SymbolTable;
 import com.interpreter.solvers.Context;
 import com.interpreter.token.Token;
 
@@ -11,6 +12,12 @@ public class VarExpression implements AbstractExpression {
 
     public VarExpression(Token token) {
         this.token = token;
+    }
+
+    @Override
+    public void analyzeNode(SymbolTable symbolTable) {
+        String varName = token.getValue(String.class).orElseThrow(RuntimeException::new);
+        symbolTable.fetchSymbol(varName);
     }
 
     @Override

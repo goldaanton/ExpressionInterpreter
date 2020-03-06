@@ -1,5 +1,6 @@
 package com.interpreter.nodes;
 
+import com.interpreter.semanticanalyzer.SymbolTable;
 import com.interpreter.solvers.Context;
 
 import java.util.ArrayList;
@@ -14,6 +15,14 @@ public class BlockExpression implements AbstractExpression {
     public BlockExpression(List<DeclarationExpression> declarationList, CompoundExpression compoundExpression) {
         this.declarationList = declarationList;
         this.compoundExpression = compoundExpression;
+    }
+
+    @Override
+    public void analyzeNode(SymbolTable symbolTable) {
+        for(DeclarationExpression expression : declarationList) {
+            expression.analyzeNode(symbolTable);
+        }
+        compoundExpression.analyzeNode(symbolTable);
     }
 
     @Override
