@@ -3,6 +3,7 @@ package com.interpreter.symbols;
 import java.util.Optional;
 
 public abstract class Symbol {
+
     protected String name;
     protected Symbol type;
 

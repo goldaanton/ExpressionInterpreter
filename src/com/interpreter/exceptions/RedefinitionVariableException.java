@@ -1,6 +1,7 @@
 package com.interpreter.exceptions;
 
 public class RedefinitionVariableException extends RuntimeException {
+
     private String name;
 
     public RedefinitionVariableException(String name) {

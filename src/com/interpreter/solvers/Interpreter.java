@@ -1,6 +1,5 @@
 package com.interpreter.solvers;
 
-
 import com.interpreter.nodes.*;
 import com.interpreter.semanticanalyzer.SemanticAnalyzer;
 
@@ -20,10 +19,6 @@ public class Interpreter {
         AbstractExpression tree = parser.parse();
         semanticAnalyzer.analyze(tree);
         tree.solve(context);
-    }
-
-    public SemanticAnalyzer getSemanticAnalyzer(){
-        return semanticAnalyzer;
     }
 
     public Context getContext() {

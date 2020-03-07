@@ -1,9 +1,9 @@
 package com.interpreter.nodes;
 
+import com.interpreter.exceptions.NoSuchOperatorException;
 import com.interpreter.semanticanalyzer.SymbolTable;
 import com.interpreter.solvers.Context;
 import com.interpreter.token.Token;
-import com.interpreter.token.TokenType;
 import java.util.Optional;
 
 public class UnaryOpExpression implements AbstractExpression {
@@ -23,15 +23,16 @@ public class UnaryOpExpression implements AbstractExpression {
 
     @Override
     public Optional<?> solve(Context context) {
-        TokenType opType = op.getType();
-
         int opValue = ((Optional<Integer>)expr.solve(context))
                 .orElseThrow(RuntimeException::new);
 
-        if(opType == TokenType.ADDITION)
-            return Optional.of(opValue);
-        else if (opType == TokenType.SUBTRACTION)
-            return Optional.of(-1 * opValue);
-        return Optional.empty();
+        switch (op.getType()) {
+            case ADDITION:
+                return Optional.of(opValue);
+            case SUBTRACTION:
+                return Optional.of(-1 * opValue);
+            default:
+                throw new NoSuchOperatorException("UnaryOpExpression");
+        }
     }
 }

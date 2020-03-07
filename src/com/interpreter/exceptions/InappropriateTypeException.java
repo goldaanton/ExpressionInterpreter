@@ -1,16 +1,16 @@
 package com.interpreter.exceptions;
 
-public class NoSuchSymbolException extends RuntimeException {
+public class InappropriateTypeException extends RuntimeException {
 
     private String name;
 
-    public NoSuchSymbolException(String name) {
+    public InappropriateTypeException(String name) {
         this.name = name;
     }
 
     @Override
     public String toString() {
-        return "NoSuchSymbolException{" +
+        return "InappropriateTypeException{" +
                 "name='" + name + '\'' +
                 '}';
     }

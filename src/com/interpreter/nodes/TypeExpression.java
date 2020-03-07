@@ -14,19 +14,16 @@ public class TypeExpression implements AbstractExpression {
         this.token = token;
     }
 
-    public Token getToken() {
-        return token;
-    }
-
     @Override
     public void analyzeNode(SymbolTable symbolTable) {
-
     }
 
     @Override
     public Optional<?> solve(Context context) {
-
-
         return Optional.empty();
+    }
+
+    public Token getToken() {
+        return token;
     }
 }

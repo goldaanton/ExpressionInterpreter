@@ -1,9 +1,9 @@
 package com.interpreter.nodes;
 
+import com.interpreter.exceptions.NoSuchOperatorException;
 import com.interpreter.semanticanalyzer.SymbolTable;
 import com.interpreter.solvers.Context;
 import com.interpreter.token.Token;
-import com.interpreter.token.TokenType;
 
 import java.util.Optional;
 
@@ -32,15 +32,17 @@ public class BinOpExpression implements AbstractExpression {
         int rightValue = ((Optional<Integer>)right.solve(context))
                 .orElseThrow(RuntimeException::new);
 
-        if(op.getType() == TokenType.ADDITION) {
-            return Optional.of(leftValue + rightValue);
-        } else if (op.getType() == TokenType.SUBTRACTION) {
-            return Optional.of(leftValue - rightValue);
-        } else if (op.getType() == TokenType.DIVISION) {
-            return Optional.of(leftValue / rightValue);
-        } else if (op.getType() == TokenType.MULTIPLICATION) {
-            return Optional.of(leftValue * rightValue);
+        switch (op.getType()) {
+            case ADDITION:
+                return Optional.of(leftValue + rightValue);
+            case SUBTRACTION:
+                return Optional.of(leftValue - rightValue);
+            case MULTIPLICATION:
+                return Optional.of(leftValue * rightValue);
+            case DIVISION:
+                return Optional.of(leftValue / rightValue);
+            default:
+                throw new NoSuchOperatorException("BinOpExpression");
         }
-        throw new RuntimeException();
     }
 }

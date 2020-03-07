@@ -16,7 +16,6 @@ public class NumExpression implements AbstractExpression {
 
     @Override
     public void analyzeNode(SymbolTable symbolTable) {
-
     }
 
     @Override

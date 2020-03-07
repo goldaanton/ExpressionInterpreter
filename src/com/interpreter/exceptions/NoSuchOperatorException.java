@@ -1,16 +1,16 @@
 package com.interpreter.exceptions;
 
-public class NoSuchSymbolException extends RuntimeException {
+public class NoSuchOperatorException extends RuntimeException{
 
     private String name;
 
-    public NoSuchSymbolException(String name) {
+    public NoSuchOperatorException(String name) {
         this.name = name;
     }
 
     @Override
     public String toString() {
-        return "NoSuchSymbolException{" +
+        return "NoSuchOperatorException{" +
                 "name='" + name + '\'' +
                 '}';
     }

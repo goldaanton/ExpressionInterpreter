@@ -87,7 +87,7 @@ public class Lexer {
     private Token id() {
         StringBuilder result = new StringBuilder();
 
-        while(currentChar != NONE && Character.isAlphabetic(currentChar)) {
+        while(currentChar != NONE && Character.isLetterOrDigit(currentChar)) {
             result.append(currentChar);
             advance();
         }
@@ -96,45 +96,30 @@ public class Lexer {
     }
 
     public Token getNextToken() {
-        while (currentChar != NONE) {
+//        while (currentChar != NONE) {
             if (Character.isWhitespace(currentChar))
                 skipWhiteSpaces();
             if (Character.isDigit(currentChar))
                 return getNumberToken();
-            if (Character.isAlphabetic(currentChar)) {
+            if (Character.isAlphabetic(currentChar))
                 return id();
-            }
-            if (currentChar == '[') {
+            if(currentChar == '[') {
                 advance();
                 skipComment();
-            }
-            if(currentChar == ':') {
-                advance();
-                return new Token(TokenType.COLON);
-            }
-            if(currentChar == ',') {
-                advance();
-                return new Token(TokenType.COMMA);
             }
 
             Token token = new Token(TokenType.getTokenTypeByAbbreviation(currentChar));
             advance();
 
             return token;
-        }
-        return new Token(TokenType.EOF);
+//        }
     }
 
-//    private char peek() {
-//        int peekPos = ++pos;
-//        if(peekPos >= expression.length())
-//            return none;
-//        else
-//            return expression.charAt(peekPos);
-//    }
-
-
-    public char getCurrentChar() {
-        return currentChar;
-    }
+    /*private char peek() {
+        int peekPos = ++pos;
+        if(peekPos >= expression.length())
+            return NONE;
+        else
+            return expression.charAt(peekPos);
+    }*/
 }

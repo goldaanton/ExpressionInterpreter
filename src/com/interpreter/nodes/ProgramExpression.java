@@ -2,9 +2,7 @@ package com.interpreter.nodes;
 
 import com.interpreter.semanticanalyzer.SymbolTable;
 import com.interpreter.solvers.Context;
-import com.interpreter.symbols.Symbol;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 public class ProgramExpression implements AbstractExpression {
@@ -26,5 +24,9 @@ public class ProgramExpression implements AbstractExpression {
     public Optional<?> solve(Context context) {
         block.solve(context);
         return Optional.empty();
+    }
+
+    public String getName() {
+        return name;
     }
 }

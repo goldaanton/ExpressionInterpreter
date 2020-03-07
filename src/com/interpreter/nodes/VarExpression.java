@@ -16,14 +16,17 @@ public class VarExpression implements AbstractExpression {
 
     @Override
     public void analyzeNode(SymbolTable symbolTable) {
-        String varName = token.getValue(String.class).orElseThrow(RuntimeException::new);
+        String varName = token.getValue(String.class)
+                .orElseThrow(RuntimeException::new);
         symbolTable.fetchSymbol(varName);
     }
 
     @Override
     public Optional<?> solve(Context context) {
-        String varName = token.getValue(String.class).orElseThrow(RuntimeException::new);
-        return Optional.of(context.getGlobalScope().get(varName)).orElseThrow(RuntimeException::new);
+        String varName = token.getValue(String.class)
+                .orElseThrow(RuntimeException::new);
+        return Optional.of(context.getGlobalScope().get(varName))
+                .orElseThrow(RuntimeException::new);
     }
 
     public Token getVarToken() {

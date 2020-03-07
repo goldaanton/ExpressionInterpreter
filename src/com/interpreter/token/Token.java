@@ -1,5 +1,7 @@
 package com.interpreter.token;
 
+import com.interpreter.exceptions.InappropriateTypeException;
+
 import java.util.Optional;
 
 public class Token {
@@ -25,7 +27,6 @@ public class Token {
         if (expectedType.isInstance(value))
             return Optional.ofNullable(expectedType.cast(value));
         else
-            // TODO throw exception providing type checking has failed
-            throw new RuntimeException();
+            throw new InappropriateTypeException("Token");
     }
 }

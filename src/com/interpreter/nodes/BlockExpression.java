@@ -3,7 +3,6 @@ package com.interpreter.nodes;
 import com.interpreter.semanticanalyzer.SymbolTable;
 import com.interpreter.solvers.Context;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

@@ -1,15 +1,12 @@
 package com.interpreter.solvers;
 
+import com.interpreter.exceptions.InvalidSyntaxException;
 import com.interpreter.nodes.*;
 import com.interpreter.token.Token;
 import com.interpreter.token.TokenType;
 
-import javax.lang.model.element.VariableElement;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.lang.System.exit;
 
 public class Parser {
 
@@ -21,16 +18,153 @@ public class Parser {
         this.currentToken = lexer.getNextToken();
     }
 
-    private void error() {
-        System.out.println("Invalid syntax");
-        exit(1);
-    }
-
     private void eat(TokenType type) {
         if (currentToken.getType() == type)
             currentToken = lexer.getNextToken();
         else
-            error();
+            throw new InvalidSyntaxException(currentToken.getType().name());
+    }
+
+    private AbstractExpression factor() {
+        /*
+         *       factor : PLUS  factor | MINUS factor | INTEGER
+         *              | L_PARENTHESIS expr R_PARENTHESIS | variable
+         */
+
+        Token token = currentToken;
+
+        switch (token.getType()) {
+            case ADDITION:
+                eat(TokenType.ADDITION);
+                return new UnaryOpExpression(token, factor());
+            case SUBTRACTION:
+                eat(TokenType.SUBTRACTION);
+                return new UnaryOpExpression(token, factor());
+            case INTEGER:
+                eat(TokenType.INTEGER);
+                return new NumExpression(token);
+            case DOUBLE:
+                eat(TokenType.DOUBLE);
+                return new NumExpression(token);
+            case L_PARENTHESIS:
+                eat(TokenType.L_PARENTHESIS);
+                AbstractExpression node = expr();
+                eat(TokenType.R_PARENTHESIS);
+                return node;
+            default:
+                return variable();
+        }
+    }
+
+    private AbstractExpression term() {
+        /*
+         *       term : factor ((MUL | DIV) factor)*
+         */
+
+        AbstractExpression node = factor();
+
+        while (currentToken.getType() == TokenType.DIVISION || currentToken.getType() == TokenType.MULTIPLICATION) {
+            Token token = currentToken;
+            if (token.getType() == TokenType.MULTIPLICATION)
+                eat(TokenType.MULTIPLICATION);
+            else if (token.getType() == TokenType.DIVISION)
+                eat(TokenType.DIVISION);
+
+            node = new BinOpExpression(node, token, factor());
+        }
+
+        return node;
+    }
+
+    private AbstractExpression expr() {
+        /*
+         *       expr : term ((PLUS | MINUS) term)*
+         */
+
+        AbstractExpression node = term();
+
+        while (currentToken.getType() == TokenType.ADDITION || currentToken.getType() == TokenType.SUBTRACTION) {
+            Token token = currentToken;
+            if (token.getType() == TokenType.ADDITION)
+                eat(TokenType.ADDITION);
+            else if (token.getType() == TokenType.SUBTRACTION)
+                eat(TokenType.SUBTRACTION);
+
+            node = new BinOpExpression(node, token, term());
+        }
+
+        return node;
+    }
+
+    private AbstractExpression empty() {
+        /*
+         *      An empty production
+         */
+
+        return new NoOpExpression();
+    }
+
+    private AbstractExpression assignmentStatement() {
+        /*
+         *      assignment_statement : variable ASSIGN expr
+         */
+
+        AbstractExpression left = variable();
+        eat(TokenType.ASSIGN);
+        AbstractExpression right = expr();
+
+        return new AssignExpression((VarExpression)left, right);
+    }
+
+    private AbstractExpression statement() {
+        /*
+         *      statement : compound_statement | assignment_statement | empty
+         */
+
+        if(currentToken.getType() == TokenType.BEGIN)
+            return compoundStatement();
+        else if (currentToken.getType() == TokenType.ID)
+            return assignmentStatement();
+        else
+            return empty();
+    }
+
+    private ArrayList<AbstractExpression> statementList() {
+        /*
+         *      statement_list : statement | statement SEMI statement_list
+         */
+
+        AbstractExpression node = statement();
+
+        ArrayList<AbstractExpression> result = new ArrayList<>();
+        result.add(node);
+
+        while (currentToken.getType() == TokenType.SEMI) {
+            eat(TokenType.SEMI);
+            result.add(statement());
+        }
+
+        if(currentToken.getType() == TokenType.ID)
+            throw new InvalidSyntaxException("statementList");
+
+        return result;
+    }
+
+    private AbstractExpression compoundStatement() {
+        /*
+         *      compoundStatement : BEGIN statementList END
+         */
+
+        eat(TokenType.BEGIN);
+        ArrayList<AbstractExpression> nodes = statementList();
+        eat(TokenType.END);
+
+        CompoundExpression root = new CompoundExpression();
+        for(AbstractExpression node : nodes) {
+            root.getChildren().add(node);
+        }
+
+        return root;
     }
 
     private TypeExpression typeSpecification() {
@@ -89,160 +223,8 @@ public class Parser {
                 eat(TokenType.SEMI);
             }
         }
+
         return  declaration;
-    }
-
-    private AbstractExpression variable() {
-        /*
-         *      variable : ID
-         */
-
-        AbstractExpression node = new VarExpression(currentToken);
-        eat(TokenType.ID);
-        return node;
-    }
-
-    private AbstractExpression factor() {
-
-        /*
-         *       factor : PLUS  factor | MINUS factor | INTEGER
-         *              | LPAREN expr RPAREN | variable
-         */
-
-        Token token = currentToken;
-
-        if(token.getType() == TokenType.ADDITION) {
-            eat(TokenType.ADDITION);
-            return new UnaryOpExpression(token, factor());
-        } else if (token.getType() == TokenType.SUBTRACTION) {
-            eat(TokenType.SUBTRACTION);
-            return new UnaryOpExpression(token, factor());
-        } else if (token.getType() == TokenType.INTEGER) {
-            eat(TokenType.INTEGER);
-            return new NumExpression(token);
-        } else if (token.getType() == TokenType.DOUBLE) {
-            eat(TokenType.DOUBLE);
-            return new NumExpression(token);
-        } else if (token.getType() == TokenType.L_PARENTHESIS) {
-            eat(TokenType.L_PARENTHESIS);
-            AbstractExpression node = expr();
-            eat(TokenType.R_PARENTHESIS);
-            return node;
-        } else {
-            return variable();
-        }
-    }
-
-    private AbstractExpression term() {
-
-        /*
-         *       term : factor ((MUL | DIV) factor)*
-         */
-
-        AbstractExpression node = factor();
-
-        while (currentToken.getType() == TokenType.DIVISION || currentToken.getType() == TokenType.MULTIPLICATION) {
-            Token token = currentToken;
-            if (token.getType() == TokenType.MULTIPLICATION) {
-                eat(TokenType.MULTIPLICATION);
-            } else if (token.getType() == TokenType.DIVISION) {
-                eat(TokenType.DIVISION);
-            }
-            node = new BinOpExpression(node, token, factor());
-        }
-        return node;
-    }
-
-    private AbstractExpression expr() {
-
-        /*
-         *       expr   : term ((PLUS | MINUS) term)*
-         */
-
-        AbstractExpression node = term();
-
-        while (currentToken.getType() == TokenType.ADDITION || currentToken.getType() == TokenType.SUBTRACTION) {
-            Token token = currentToken;
-            if (token.getType() == TokenType.ADDITION) {
-                eat(TokenType.ADDITION);
-            } else if (token.getType() == TokenType.SUBTRACTION) {
-                eat(TokenType.SUBTRACTION);
-            }
-            node = new BinOpExpression(node, token, term());
-        }
-        return node;
-    }
-
-
-    private AbstractExpression assignmentStatement() {
-        /*
-         *      assignment_statement : variable ASSIGN expr
-         */
-
-        AbstractExpression left = variable();
-        Token token = currentToken;
-        eat(TokenType.ASSIGN);
-        AbstractExpression right = expr();
-        return  new AssignExpression((VarExpression)left, right);
-    }
-
-    private AbstractExpression empty() {
-        /*
-         *      An empty production
-         */
-
-        return new NoOpExpression();
-    }
-
-    private AbstractExpression statement() {
-        /*
-         *      statement : compound_statement | assignment_statement | empty
-         */
-
-        if(currentToken.getType() == TokenType.BEGIN)
-            return compoundStatement();
-        else if (currentToken.getType() == TokenType.ID)
-            return assignmentStatement();
-        else
-            return empty();
-    }
-
-    private ArrayList<AbstractExpression> statementList() {
-        /*
-         *      statement_list : statement | statement SEMI statement_list
-         */
-
-        AbstractExpression node = statement();
-
-        ArrayList<AbstractExpression> result = new ArrayList<>();
-        result.add(node);
-
-        while (currentToken.getType() == TokenType.SEMI) {
-            eat(TokenType.SEMI);
-            result.add(statement());
-        }
-
-        if(currentToken.getType() == TokenType.ID)
-            error();
-
-        return result;
-    }
-
-    private AbstractExpression compoundStatement() {
-        /*
-         *      compoundStatement : BEGIN statementList END
-         */
-
-
-        eat(TokenType.BEGIN);
-        ArrayList<AbstractExpression> nodes = statementList();
-        eat(TokenType.END);
-
-        CompoundExpression root = new CompoundExpression();
-        for(AbstractExpression node : nodes) {
-            root.getChildren().add(node);
-        }
-        return root;
     }
 
     private BlockExpression block() {
@@ -256,6 +238,17 @@ public class Parser {
         return new BlockExpression(declarationNodes, compoundExpression);
     }
 
+    private AbstractExpression variable() {
+        /*
+         *      variable : ID
+         */
+
+        AbstractExpression node = new VarExpression(currentToken);
+        eat(TokenType.ID);
+
+        return node;
+    }
+
     private AbstractExpression program() {
         /*
          *      program : PROGRAM variable SEMI block DOT
@@ -263,7 +256,8 @@ public class Parser {
 
         eat(TokenType.PROGRAM);
         VarExpression varNode = (VarExpression) variable();
-        String programName = (varNode).getVarToken().getValue(String.class).orElseThrow(RuntimeException::new);
+        String programName = (varNode).getVarToken().getValue(String.class)
+                .orElseThrow(RuntimeException::new);
         eat(TokenType.SEMI);
 
         BlockExpression blockExpression = block();
@@ -277,7 +271,8 @@ public class Parser {
     public AbstractExpression parse() {
         AbstractExpression root = program();
         if (currentToken.getType() != TokenType.EOF)
-            error();
+            throw new InvalidSyntaxException("parse");
+
         return root;
     }
 }

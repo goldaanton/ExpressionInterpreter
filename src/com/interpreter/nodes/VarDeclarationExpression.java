@@ -33,7 +33,8 @@ public class VarDeclarationExpression extends DeclarationExpression{
 
     @Override
     public Optional<?> solve(Context context) {
-        context.getGlobalScope().put(variable.getVarToken().getValue(String.class).orElseThrow(RuntimeException::new), TokenType.getDefaultValue(tokenType));
+        context.getGlobalScope().put(variable.getVarToken().getValue(String.class)
+                .orElseThrow(RuntimeException::new), TokenType.getDefaultValue(tokenType));
 
         return Optional.empty();
     }

@@ -1,16 +1,16 @@
 package com.interpreter.exceptions;
 
-public class NoSuchSymbolException extends RuntimeException {
+public class InvalidSyntaxException extends RuntimeException{
 
     private String name;
 
-    public NoSuchSymbolException(String name) {
+    public InvalidSyntaxException(String name) {
         this.name = name;
     }
 
     @Override
     public String toString() {
-        return "NoSuchSymbolException{" +
+        return "InvalidSyntaxException{" +
                 "name='" + name + '\'' +
                 '}';
     }

@@ -1,5 +1,7 @@
 package com.interpreter.token;
 
+import com.interpreter.exceptions.BadDefaultValueException;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -55,7 +57,7 @@ public enum TokenType {
             case DOUBLE:
                 return Optional.of(0.0);
             default:
-                throw new RuntimeException();
+                throw new BadDefaultValueException(type.name());
         }
     }
 
