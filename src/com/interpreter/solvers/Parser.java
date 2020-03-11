@@ -46,6 +46,9 @@ public class Parser {
             case DOUBLE:
                 eat(TokenType.DOUBLE);
                 return new NumExpression(token);
+            case STRING:
+                eat(TokenType.STRING);
+                return new StringExpression(token);
             case L_PARENTHESIS:
                 eat(TokenType.L_PARENTHESIS);
                 AbstractExpression node = expr();
@@ -113,7 +116,7 @@ public class Parser {
         eat(TokenType.ASSIGN);
         AbstractExpression right = expr();
 
-        return new AssignExpression((VarExpression)left, right);
+        return new AssignExpression((VarExpression) left, right);
     }
 
     private AbstractExpression statement() {
@@ -121,7 +124,7 @@ public class Parser {
          *      statement : compound_statement | assignment_statement | empty
          */
 
-        if(currentToken.getType() == TokenType.BEGIN)
+        if (currentToken.getType() == TokenType.BEGIN)
             return compoundStatement();
         else if (currentToken.getType() == TokenType.ID)
             return assignmentStatement();
@@ -144,7 +147,7 @@ public class Parser {
             result.add(statement());
         }
 
-        if(currentToken.getType() == TokenType.ID)
+        if (currentToken.getType() == TokenType.ID)
             throw new InvalidSyntaxException("statementList");
 
         return result;
@@ -160,7 +163,7 @@ public class Parser {
         eat(TokenType.END);
 
         CompoundExpression root = new CompoundExpression();
-        for(AbstractExpression node : nodes) {
+        for (AbstractExpression node : nodes) {
             root.getChildren().add(node);
         }
 
@@ -173,10 +176,12 @@ public class Parser {
          */
 
         Token token = currentToken;
-        if(currentToken.getType() == TokenType.INTEGER)
+        if (currentToken.getType() == TokenType.INTEGER)
             eat(TokenType.INTEGER);
-        else
+        else if (currentToken.getType() == TokenType.DOUBLE)
             eat(TokenType.DOUBLE);
+        else if (currentToken.getType() == TokenType.STRING)
+            eat(TokenType.STRING);
         return new TypeExpression(token);
     }
 
@@ -189,7 +194,7 @@ public class Parser {
         varNodes.add(new VarExpression(currentToken));
         eat(TokenType.ID);
 
-        while(currentToken.getType() == TokenType.COMMA) {
+        while (currentToken.getType() == TokenType.COMMA) {
             eat(TokenType.COMMA);
             varNodes.add(new VarExpression(currentToken));
             eat(TokenType.ID);
@@ -201,7 +206,7 @@ public class Parser {
 
         List<DeclarationExpression> variableDeclaration = new ArrayList<>();
 
-        for(VarExpression varExpression : varNodes) {
+        for (VarExpression varExpression : varNodes) {
             variableDeclaration.add(new VarDeclarationExpression(varExpression, typeExpression.getToken().getType()));
         }
 
@@ -213,8 +218,8 @@ public class Parser {
          *      declarations : VAR (variable_declaration SEMI)+ | empty
          */
 
-        List<DeclarationExpression>  declaration = new ArrayList<>();
-        if(currentToken.getType() == TokenType.VAR) {
+        List<DeclarationExpression> declaration = new ArrayList<>();
+        if (currentToken.getType() == TokenType.VAR) {
             eat(TokenType.VAR);
 
             while (currentToken.getType() == TokenType.ID) {
@@ -224,7 +229,7 @@ public class Parser {
             }
         }
 
-        return  declaration;
+        return declaration;
     }
 
     private BlockExpression block() {
@@ -233,7 +238,7 @@ public class Parser {
          */
 
         List<DeclarationExpression> declarationNodes = declaration();
-        CompoundExpression compoundExpression = (CompoundExpression)compoundStatement();
+        CompoundExpression compoundExpression = (CompoundExpression) compoundStatement();
 
         return new BlockExpression(declarationNodes, compoundExpression);
     }
@@ -256,7 +261,7 @@ public class Parser {
 
         eat(TokenType.PROGRAM);
         VarExpression varNode = (VarExpression) variable();
-        String programName = (varNode).getVarToken().getValue(String.class)
+        String programName = varNode.getVarToken().getValue(String.class)
                 .orElseThrow(RuntimeException::new);
         eat(TokenType.SEMI);
 

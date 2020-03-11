@@ -9,7 +9,7 @@ import com.interpreter.token.TokenType;
 
 import java.util.Optional;
 
-public class VarDeclarationExpression extends DeclarationExpression{
+public class VarDeclarationExpression extends DeclarationExpression {
 
     private VarExpression variable;
     private TokenType tokenType;
@@ -24,7 +24,7 @@ public class VarDeclarationExpression extends DeclarationExpression{
         String varName = variable.getVarToken().getValue(String.class).orElseThrow(RuntimeException::new);
         TokenType varType = tokenType;
 
-        if(symbolTable.containSymbol(varName))
+        if (symbolTable.containSymbol(varName))
             throw new RedefinitionVariableException(varName);
 
         Symbol varTypeSymbol = symbolTable.fetchSymbol(varType.name());

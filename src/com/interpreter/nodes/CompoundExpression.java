@@ -16,17 +16,17 @@ public class CompoundExpression implements AbstractExpression {
 
     @Override
     public void analyzeNode(SymbolTable symbolTable) {
-        for(AbstractExpression child : children) {
+        for (AbstractExpression child : children) {
             child.analyzeNode(symbolTable);
         }
     }
 
     @Override
     public Optional<?> solve(Context context) {
-        for(AbstractExpression child : children) {
+        for (AbstractExpression child : children) {
             child.solve(context);
         }
-        return Optional.empty() ;
+        return Optional.empty();
     }
 
     public ArrayList<AbstractExpression> getChildren() {

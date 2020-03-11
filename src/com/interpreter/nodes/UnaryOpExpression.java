@@ -4,6 +4,7 @@ import com.interpreter.exceptions.NoSuchOperatorException;
 import com.interpreter.semanticanalyzer.SymbolTable;
 import com.interpreter.solvers.Context;
 import com.interpreter.token.Token;
+
 import java.util.Optional;
 
 public class UnaryOpExpression implements AbstractExpression {
@@ -23,7 +24,7 @@ public class UnaryOpExpression implements AbstractExpression {
 
     @Override
     public Optional<?> solve(Context context) {
-        int opValue = ((Optional<Integer>)expr.solve(context))
+        int opValue = ((Optional<Integer>) expr.solve(context))
                 .orElseThrow(RuntimeException::new);
 
         switch (op.getType()) {

@@ -27,12 +27,16 @@ public class Lexer {
         Token beginToken = new Token(TokenType.BEGIN, "BEGIN");
         Token endToken = new Token(TokenType.END, "END");
 
+        Token strToken = new Token(TokenType.STRING, "string");
+
         temporaryMap.put(beginToken.getValue(String.class).orElseThrow(RuntimeException::new), beginToken);
         temporaryMap.put(endToken.getValue(String.class).orElseThrow(RuntimeException::new), endToken);
         temporaryMap.put(programToken.getValue(String.class).orElseThrow(RuntimeException::new), programToken);
         temporaryMap.put(varToken.getValue(String.class).orElseThrow(RuntimeException::new), varToken);
         temporaryMap.put(intToken.getValue(String.class).orElseThrow(RuntimeException::new), intToken);
         temporaryMap.put(doubleToken.getValue(String.class).orElseThrow(RuntimeException::new), doubleToken);
+
+        temporaryMap.put(strToken.getValue(String.class).orElseThrow(RuntimeException::new), strToken);
 
         RESERVED_KEYWORDS = Collections.unmodifiableMap(temporaryMap);
     }
@@ -45,7 +49,7 @@ public class Lexer {
 
     private void advance() {
         pos++;
-        if(pos >= expression.length())
+        if (pos >= expression.length())
             currentChar = NONE;
         else
             currentChar = expression.charAt(pos);
@@ -64,16 +68,16 @@ public class Lexer {
 
     private Token getNumberToken() {
         StringBuilder number = new StringBuilder();
-        while(currentChar != NONE && Character.isDigit(currentChar)) {
+        while (currentChar != NONE && Character.isDigit(currentChar)) {
             number.append(currentChar);
             advance();
         }
 
-        if(currentChar == '.') {
+        if (currentChar == '.') {
             number.append(currentChar);
             advance();
 
-            while(currentChar != NONE && Character.isDigit(currentChar)) {
+            while (currentChar != NONE && Character.isDigit(currentChar)) {
                 number.append(currentChar);
                 advance();
             }
@@ -84,10 +88,21 @@ public class Lexer {
         return new Token(TokenType.INTEGER, Integer.parseInt(number.toString()));
     }
 
+    private Token getString() {
+        StringBuilder str = new StringBuilder();
+
+        while (currentChar != NONE && currentChar != '"') {
+            str.append(currentChar);
+            advance();
+        }
+        advance();
+        return new Token(TokenType.STRING, str.toString());
+    }
+
     private Token id() {
         StringBuilder result = new StringBuilder();
 
-        while(currentChar != NONE && Character.isLetterOrDigit(currentChar)) {
+        while (currentChar != NONE && Character.isLetterOrDigit(currentChar)) {
             result.append(currentChar);
             advance();
         }
@@ -96,23 +111,25 @@ public class Lexer {
     }
 
     public Token getNextToken() {
-//        while (currentChar != NONE) {
-            if (Character.isWhitespace(currentChar))
-                skipWhiteSpaces();
-            if (Character.isDigit(currentChar))
-                return getNumberToken();
-            if (Character.isAlphabetic(currentChar))
-                return id();
-            if(currentChar == '[') {
-                advance();
-                skipComment();
-            }
-
-            Token token = new Token(TokenType.getTokenTypeByAbbreviation(currentChar));
+        if (Character.isWhitespace(currentChar))
+            skipWhiteSpaces();
+        if (Character.isDigit(currentChar))
+            return getNumberToken();
+        if (Character.isAlphabetic(currentChar))
+            return id();
+        if (currentChar == '[') {
             advance();
+            skipComment();
+        }
+        if (currentChar == '"') {
+            advance();
+            return getString();
+        }
 
-            return token;
-//        }
+        Token token = new Token(TokenType.getTokenTypeByAbbreviation(currentChar));
+        advance();
+
+        return token;
     }
 
     /*private char peek() {

@@ -18,7 +18,7 @@ public class BlockExpression implements AbstractExpression {
 
     @Override
     public void analyzeNode(SymbolTable symbolTable) {
-        for(DeclarationExpression expression : declarationList) {
+        for (DeclarationExpression expression : declarationList) {
             expression.analyzeNode(symbolTable);
         }
         compoundExpression.analyzeNode(symbolTable);

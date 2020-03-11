@@ -28,10 +28,11 @@ public class SymbolTable {
     public void initializeBuiltIn() {
         defineSymbol(new BuiltinTypeSymbol(TokenType.INTEGER.name()));
         defineSymbol(new BuiltinTypeSymbol(TokenType.DOUBLE.name()));
+        defineSymbol(new BuiltinTypeSymbol(TokenType.STRING.name()));
     }
 
     public Symbol fetchSymbol(String symbolName) {
-        if(!symbols.containsKey(symbolName))
+        if (!symbols.containsKey(symbolName))
             throw new NoSuchSymbolException(symbolName);
 
         return symbols.get(symbolName);

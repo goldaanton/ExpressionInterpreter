@@ -27,9 +27,9 @@ public class BinOpExpression implements AbstractExpression {
 
     @Override
     public Optional<?> solve(Context context) {
-        int leftValue = ((Optional<Integer>)left.solve(context))
+        int leftValue = ((Optional<Integer>) left.solve(context))
                 .orElseThrow(RuntimeException::new);
-        int rightValue = ((Optional<Integer>)right.solve(context))
+        int rightValue = ((Optional<Integer>) right.solve(context))
                 .orElseThrow(RuntimeException::new);
 
         switch (op.getType()) {

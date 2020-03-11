@@ -20,6 +20,7 @@ public enum TokenType {
 
     INTEGER('i'),
     DOUBLE('f'),
+    STRING('s'),
 
     BEGIN('b'),
     END('e'),
@@ -56,6 +57,8 @@ public enum TokenType {
                 return Optional.of(0);
             case DOUBLE:
                 return Optional.of(0.0);
+            case STRING:
+                return Optional.of("");
             default:
                 throw new BadDefaultValueException(type.name());
         }

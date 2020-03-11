@@ -1,6 +1,6 @@
 package com.interpreter.solvers;
 
-import com.interpreter.nodes.*;
+import com.interpreter.nodes.AbstractExpression;
 import com.interpreter.semanticanalyzer.SemanticAnalyzer;
 
 public class Interpreter {
